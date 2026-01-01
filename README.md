@@ -1,6 +1,6 @@
-# 🔥 FLAMES - Destiny Relationship Analyzer
+# 🔥 FLAMES Social App
 
-A premium, modern FLAMES (Friends, Lovers, Affection, Marriage, Enemy, Siblings) relationship prediction game with cinematic animations, glowing effects, and romantic vibes.
+A full-stack social platform for relationship compatibility testing using the classic FLAMES game algorithm with modern features including user accounts, friends system, social feed, and more!
 
 ## ✨ Features
 
