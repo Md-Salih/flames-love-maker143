@@ -29,6 +29,225 @@
         </div>
     </div>
 
+    <!-- Social Navigation Bar -->
+    <nav class="social-nav" id="socialNav">
+        <div class="nav-item active" id="navHome" title="Home Feed">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </div>
+        <div class="nav-item" id="navStories" title="FLAMES Stories">
+            <span class="nav-icon">📖</span>
+            <span class="nav-label">Stories</span>
+            <span class="stories-badge" id="storiesBadge">3</span>
+        </div>
+        <div class="nav-item" id="navCalculator" title="New Calculation">
+            <span class="nav-icon">➕</span>
+            <span class="nav-label">Calculate</span>
+        </div>
+        <div class="nav-item" id="navLeaderboard" title="Leaderboard">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">Trending</span>
+        </div>
+        <div class="nav-item" id="navProfile" title="My Profile">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Profile</span>
+        </div>
+    </nav>
+
+    <!-- User Login/Signup Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <button class="close-auth" id="closeAuth">✕</button>
+            <div class="auth-header">
+                <div class="flames-logo-small">
+                    <span class="flame-letter-small">F</span>
+                    <span class="flame-letter-small">L</span>
+                    <span class="flame-letter-small">A</span>
+                    <span class="flame-letter-small">M</span>
+                    <span class="flame-letter-small">E</span>
+                    <span class="flame-letter-small">S</span>
+                </div>
+                <h2>Join the FLAMES Community</h2>
+                <p class="auth-subtitle">Share your destiny with the world</p>
+            </div>
+            
+            <div class="auth-form">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="loginTab">Login</button>
+                    <button class="auth-tab" id="signupTab">Sign Up</button>
+                </div>
+                
+                <div class="auth-panel active" id="loginPanel">
+                    <input type="text" class="auth-input" id="loginUsername" placeholder="Username">
+                    <input type="password" class="auth-input" id="loginPassword" placeholder="Password">
+                    <button class="auth-button" id="loginBtn">Login</button>
+                </div>
+                
+                <div class="auth-panel" id="signupPanel">
+                    <input type="text" class="auth-input" id="signupUsername" placeholder="Username">
+                    <input type="email" class="auth-input" id="signupEmail" placeholder="Email">
+                    <input type="password" class="auth-input" id="signupPassword" placeholder="Password">
+                    <button class="auth-button" id="signupBtn">Create Account</button>
+                </div>
+                
+                <div class="guest-option">
+                    <button class="guest-btn" id="continueAsGuest">Continue as Guest</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Feed Screen -->
+    <div class="social-screen" id="socialFeedScreen">
+        <div class="social-header">
+            <h1 class="social-title">FLAMES Social</h1>
+            <div class="user-info" id="userInfo">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="Avatar" class="user-avatar" id="userAvatar">
+                <span class="username" id="currentUsername">Guest</span>
+            </div>
+        </div>
+        
+        <div class="feed-container">
+            <!-- Post Creation -->
+            <div class="create-post-card">
+                <div class="create-post-header">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="Avatar" class="post-avatar" id="createPostAvatar">
+                    <input type="text" class="create-post-input" placeholder="Share your FLAMES result..." readonly id="createPostTrigger">
+                </div>
+            </div>
+            
+            <!-- Posts Feed -->
+            <div class="posts-feed" id="postsFeed">
+                <!-- Posts will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FLAMES Stories Screen -->
+    <div class="social-screen" id="storiesScreen">
+        <div class="stories-header">
+            <button class="back-btn" id="backFromStories">←</button>
+            <h2>FLAMES Stories</h2>
+        </div>
+        
+        <div class="stories-container">
+            <div class="add-story-card" id="addStoryBtn">
+                <div class="add-story-icon">➕</div>
+                <p>Share Your Story</p>
+            </div>
+            
+            <div class="stories-list" id="storiesList">
+                <!-- Stories will be dynamically added here -->
+            </div>
+        </div>
+        
+        <!-- Story Viewer -->
+        <div class="story-viewer" id="storyViewer">
+            <div class="story-viewer-header">
+                <div class="story-user-info">
+                    <img src="" alt="Avatar" class="story-avatar" id="storyAvatar">
+                    <div class="story-user-details">
+                        <span class="story-username" id="storyUsername"></span>
+                        <span class="story-time" id="storyTime"></span>
+                    </div>
+                </div>
+                <button class="close-story" id="closeStory">✕</button>
+            </div>
+            
+            <div class="story-content" id="storyContent">
+                <!-- Story content -->
+            </div>
+            
+            <div class="story-progress">
+                <div class="story-progress-bar" id="storyProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div class="social-screen" id="leaderboardScreen">
+        <div class="social-header">
+            <h1 class="social-title">🏆 Trending Couples</h1>
+        </div>
+        
+        <div class="leaderboard-tabs">
+            <button class="leaderboard-tab active" data-tab="compatible">Most Compatible</button>
+            <button class="leaderboard-tab" data-tab="popular">Most Popular</button>
+            <button class="leaderboard-tab" data-tab="recent">Recent</button>
+        </div>
+        
+        <div class="leaderboard-content" id="leaderboardContent">
+            <!-- Leaderboard items will be dynamically added -->
+        </div>
+    </div>
+
+    <!-- User Profile Screen -->
+    <div class="social-screen" id="profileScreen">
+        <div class="profile-header-bg"></div>
+        
+        <div class="profile-content">
+            <div class="profile-info-card">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                <h2 class="profile-username" id="profileUsername">Guest User</h2>
+                <p class="profile-bio" id="profileBio">Destiny seeker ✨</p>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="profilePosts">0</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="profileFollowers">0</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="profileFollowing">0</div>
+                        <div class="stat-label">Following</div>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="profile-btn" id="editProfileBtn">Edit Profile</button>
+                    <button class="profile-btn secondary" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+            
+            <div class="profile-tabs">
+                <button class="profile-tab active" data-tab="grid">📊 Results</button>
+                <button class="profile-tab" data-tab="list">📜 History</button>
+                <button class="profile-tab" data-tab="friends">👥 Friends</button>
+            </div>
+            
+            <div class="profile-grid" id="profileGrid">
+                <!-- User's FLAMES results grid -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Friends Modal -->
+    <div class="friends-modal" id="friendsModal">
+        <div class="friends-content">
+            <div class="friends-header">
+                <h2>Find Friends</h2>
+                <button class="close-friends" id="closeFriends">✕</button>
+            </div>
+            
+            <div class="search-friends">
+                <input type="text" class="search-input" id="searchFriends" placeholder="Search users...">
+            </div>
+            
+            <div class="friends-tabs">
+                <button class="friends-tab active" data-tab="suggestions">Suggestions</button>
+                <button class="friends-tab" data-tab="following">Following</button>
+                <button class="friends-tab" data-tab="followers">Followers</button>
+            </div>
+            
+            <div class="friends-list" id="friendsList">
+                <!-- Friends list will be dynamically added -->
+            </div>
+        </div>
+    </div>
+
     <!-- History Modal -->
     <div class="history-modal" id="historyModal">
         <div class="history-content">
@@ -40,6 +259,69 @@
                 <p class="no-history">No calculations yet. Start your first destiny reading! ✨</p>
             </div>
             <button class="clear-history-btn" id="clearHistoryBtn">🗑️ Clear All History</button>
+        </div>
+    </div>
+
+    <!-- Post Detail Modal (for comments and likes) -->
+    <div class="post-modal" id="postModal">
+        <div class="post-modal-content">
+            <button class="close-post-modal" id="closePostModal">✕</button>
+            
+            <div class="post-modal-layout">
+                <div class="post-modal-left">
+                    <div class="post-detail-card" id="postDetailContent">
+                        <!-- Post content will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="post-modal-right">
+                    <div class="comments-header">
+                        <h3>Comments</h3>
+                        <span class="comments-count" id="commentsCount">0</span>
+                    </div>
+                    
+                    <div class="comments-list" id="commentsList">
+                        <!-- Comments will be dynamically added -->
+                    </div>
+                    
+                    <div class="comment-input-container">
+                        <input type="text" class="comment-input" id="commentInput" placeholder="Add a comment...">
+                        <button class="comment-send-btn" id="commentSendBtn">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Post Modal -->
+    <div class="share-post-modal" id="sharePostModal">
+        <div class="share-post-content">
+            <div class="share-post-header">
+                <h2>Share Your Result</h2>
+                <button class="close-share-post" id="closeSharePost">✕</button>
+            </div>
+            
+            <div class="share-preview" id="sharePreview">
+                <!-- Result preview will be shown here -->
+            </div>
+            
+            <textarea class="share-caption" id="shareCaption" placeholder="Add a caption... ✨" maxlength="500"></textarea>
+            <div class="caption-count"><span id="captionCount">0</span>/500</div>
+            
+            <div class="share-options">
+                <label class="share-option">
+                    <input type="checkbox" id="sharePublic" checked>
+                    <span>Share to public feed</span>
+                </label>
+                <label class="share-option">
+                    <input type="checkbox" id="shareStory">
+                    <span>Add to my story (24h)</span>
+                </label>
+            </div>
+            
+            <button class="share-post-btn" id="confirmSharePost">
+                <span>📤 Share Result</span>
+            </button>
         </div>
     </div>
     

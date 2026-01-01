@@ -1127,3 +1127,996 @@ document.head.appendChild(style);
 console.log('%c🔥 FLAMES - Destiny Relationship Analyzer 🔥', 'font-size: 20px; color: #ff006e; font-weight: bold;');
 console.log('%cMade with ❤️ and ✨', 'font-size: 14px; color: #667eea;');
 console.log('%cTry entering your name to discover your destiny!', 'font-size: 12px; color: #764ba2;');
+// ===== SOCIAL FEATURES JAVASCRIPT =====
+
+// Social DOM Elements
+const socialNav = document.getElementById('socialNav');
+const navHome = document.getElementById('navHome');
+const navStories = document.getElementById('navStories');
+const navCalculator = document.getElementById('navCalculator');
+const navLeaderboard = document.getElementById('navLeaderboard');
+const navProfile = document.getElementById('navProfile');
+
+const socialFeedScreen = document.getElementById('socialFeedScreen');
+const storiesScreen = document.getElementById('storiesScreen');
+const leaderboardScreen = document.getElementById('leaderboardScreen');
+const profileScreen = document.getElementById('profileScreen');
+
+const authModal = document.getElementById('authModal');
+const closeAuth = document.getElementById('closeAuth');
+const loginTab = document.getElementById('loginTab');
+const signupTab = document.getElementById('signupTab');
+const loginPanel = document.getElementById('loginPanel');
+const signupPanel = document.getElementById('signupPanel');
+const loginBtn = document.getElementById('loginBtn');
+const signupBtn = document.getElementById('signupBtn');
+const continueAsGuest = document.getElementById('continueAsGuest');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const createPostTrigger = document.getElementById('createPostTrigger');
+const postsFeed = document.getElementById('postsFeed');
+const postModal = document.getElementById('postModal');
+const closePostModal = document.getElementById('closePostModal');
+const commentsList = document.getElementById('commentsList');
+const commentInput = document.getElementById('commentInput');
+const commentSendBtn = document.getElementById('commentSendBtn');
+
+const sharePostModal = document.getElementById('sharePostModal');
+const closeSharePost = document.getElementById('closeSharePost');
+const shareCaption = document.getElementById('shareCaption');
+const captionCount = document.getElementById('captionCount');
+const confirmSharePost = document.getElementById('confirmSharePost');
+
+const friendsModal = document.getElementById('friendsModal');
+const closeFriends = document.getElementById('closeFriends');
+const friendsList = document.getElementById('friendsList');
+
+const storiesList = document.getElementById('storiesList');
+const addStoryBtn = document.getElementById('addStoryBtn');
+const storyViewer = document.getElementById('storyViewer');
+const closeStory = document.getElementById('closeStory');
+
+const leaderboardContent = document.getElementById('leaderboardContent');
+const profileGrid = document.getElementById('profileGrid');
+
+// Social State
+let currentUser = {
+    username: 'Guest',
+    email: '',
+    isGuest: true,
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest',
+    posts: [],
+    followers: [],
+    following: [],
+    viewedStories: []
+};
+
+let allPosts = [];
+let allStories = [];
+let allUsers = [];
+let currentOpenPost = null;
+let currentResultForSharing = null;
+
+// Initialize social features
+function initializeSocialFeatures() {
+    setupSocialEventListeners();
+    generateDemoData();
+    updateUserInfo();
+    
+    // Show auth modal on first visit
+    const hasSeenAuth = localStorage.getItem('flamesAuthSeen');
+    if (!hasSeenAuth) {
+        setTimeout(() => {
+            showAuthModal();
+            localStorage.setItem('flamesAuthSeen', 'true');
+        }, 1000);
+    }
+    
+    // Load saved user
+    const savedUser = localStorage.getItem('flamesCurrentUser');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        updateUserInfo();
+    }
+    
+    // Show social feed by default
+    showSocialScreen(socialFeedScreen);
+}
+
+// Setup social event listeners
+function setupSocialEventListeners() {
+    // Navigation
+    navHome.addEventListener('click', () => switchToNav(navHome, socialFeedScreen));
+    navStories.addEventListener('click', () => switchToNav(navStories, storiesScreen));
+    navCalculator.addEventListener('click', () => {
+        switchToNav(navCalculator, homeScreen);
+        socialNav.style.display = 'none';
+        socialFeedScreen.classList.remove('active');
+        homeScreen.classList.add('active');
+    });
+    navLeaderboard.addEventListener('click', () => switchToNav(navLeaderboard, leaderboardScreen));
+    navProfile.addEventListener('click', () => switchToNav(navProfile, profileScreen));
+    
+    // Auth
+    closeAuth.addEventListener('click', hideAuthModal);
+    loginTab.addEventListener('click', () => switchAuthTab('login'));
+    signupTab.addEventListener('click', () => switchAuthTab('signup'));
+    loginBtn.addEventListener('click', handleLogin);
+    signupBtn.addEventListener('click', handleSignup);
+    continueAsGuest.addEventListener('click', handleGuestLogin);
+    logoutBtn.addEventListener('click', handleLogout);
+    
+    // Post creation
+    createPostTrigger.addEventListener('click', () => {
+        if (!currentResultForSharing) {
+            alert('Please calculate a FLAMES result first!');
+            switchToNav(navCalculator, homeScreen);
+        } else {
+            showShareModal();
+        }
+    });
+    
+    // Share modal
+    closeSharePost.addEventListener('click', hideShareModal);
+    shareCaption.addEventListener('input', updateCaptionCount);
+    confirmSharePost.addEventListener('click', handleSharePost);
+    
+    // Post modal
+    closePostModal.addEventListener('click', hidePostModal);
+    commentSendBtn.addEventListener('click', handleAddComment);
+    commentInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleAddComment();
+    });
+    
+    // Stories
+    addStoryBtn.addEventListener('click', handleAddStory);
+    closeStory.addEventListener('click', hideStoryViewer);
+    document.getElementById('backFromStories').addEventListener('click', () => {
+        switchToNav(navHome, socialFeedScreen);
+    });
+    
+    // Leaderboard tabs
+    document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const tabType = tab.dataset.tab;
+            loadLeaderboard(tabType);
+        });
+    });
+    
+    // Profile tabs
+    document.querySelectorAll('.profile-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const tabType = tab.dataset.tab;
+            loadProfileTab(tabType);
+        });
+    });
+    
+    // Friends modal
+    closeFriends.addEventListener('click', hideFriendsModal);
+    document.getElementById('profileFollowers').addEventListener('click', () => {
+        showFriendsModal('followers');
+    });
+    document.getElementById('profileFollowing').addEventListener('click', () => {
+        showFriendsModal('following');
+    });
+}
+
+// Navigation functions
+function switchToNav(navItem, screen) {
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    navItem.classList.add('active');
+    showSocialScreen(screen);
+}
+
+function showSocialScreen(screen) {
+    document.querySelectorAll('.social-screen').forEach(s => s.classList.remove('active'));
+    screen.classList.add('active');
+    socialNav.style.display = 'flex';
+    
+    // Load content based on screen
+    if (screen === socialFeedScreen) {
+        loadFeed();
+    } else if (screen === storiesScreen) {
+        loadStories();
+    } else if (screen === leaderboardScreen) {
+        loadLeaderboard('compatible');
+    } else if (screen === profileScreen) {
+        loadProfile();
+    }
+}
+
+// Auth functions
+function showAuthModal() {
+    authModal.classList.add('show');
+}
+
+function hideAuthModal() {
+    authModal.classList.remove('show');
+}
+
+function switchAuthTab(tab) {
+    if (tab === 'login') {
+        loginTab.classList.add('active');
+        signupTab.classList.remove('active');
+        loginPanel.classList.add('active');
+        signupPanel.classList.remove('active');
+    } else {
+        signupTab.classList.add('active');
+        loginTab.classList.remove('active');
+        signupPanel.classList.add('active');
+        loginPanel.classList.remove('active');
+    }
+}
+
+function handleLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!username || !password) {
+        alert('Please fill in all fields!');
+        return;
+    }
+    
+    // Simple demo login
+    currentUser = {
+        username: username,
+        email: username + '@flames.com',
+        isGuest: false,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+        posts: [],
+        followers: Math.floor(Math.random() * 100),
+        following: Math.floor(Math.random() * 100),
+        viewedStories: []
+    };
+    
+    localStorage.setItem('flamesCurrentUser', JSON.stringify(currentUser));
+    updateUserInfo();
+    hideAuthModal();
+    
+    if (window.hasHapticSupport) {
+        navigator.vibrate([50, 100, 50]);
+    }
+}
+
+function handleSignup() {
+    const username = document.getElementById('signupUsername').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    
+    if (!username || !email || !password) {
+        alert('Please fill in all fields!');
+        return;
+    }
+    
+    currentUser = {
+        username: username,
+        email: email,
+        isGuest: false,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+        posts: [],
+        followers: 0,
+        following: 0,
+        viewedStories: []
+    };
+    
+    localStorage.setItem('flamesCurrentUser', JSON.stringify(currentUser));
+    updateUserInfo();
+    hideAuthModal();
+    
+    if (window.hasHapticSupport) {
+        navigator.vibrate([50, 100, 50]);
+    }
+}
+
+function handleGuestLogin() {
+    hideAuthModal();
+}
+
+function handleLogout() {
+    currentUser = {
+        username: 'Guest',
+        email: '',
+        isGuest: true,
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest',
+        posts: [],
+        followers: 0,
+        following: 0,
+        viewedStories: []
+    };
+    
+    localStorage.removeItem('flamesCurrentUser');
+    updateUserInfo();
+    loadProfile();
+}
+
+function updateUserInfo() {
+    const elements = [
+        document.getElementById('currentUsername'),
+        document.getElementById('profileUsername')
+    ];
+    
+    elements.forEach(el => {
+        if (el) el.textContent = currentUser.username;
+    });
+    
+    const avatarElements = [
+        document.getElementById('userAvatar'),
+        document.getElementById('createPostAvatar'),
+        document.getElementById('profileAvatar')
+    ];
+    
+    avatarElements.forEach(el => {
+        if (el) el.src = currentUser.avatar;
+    });
+}
+
+// Feed functions
+function loadFeed() {
+    postsFeed.innerHTML = '';
+    
+    if (allPosts.length === 0) {
+        postsFeed.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 60px 20px;">No posts yet. Calculate your FLAMES and share it! ✨</p>';
+        return;
+    }
+    
+    allPosts.forEach(post => {
+        const postCard = createPostCard(post);
+        postsFeed.appendChild(postCard);
+    });
+}
+
+function createPostCard(post) {
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    card.dataset.postId = post.id;
+    
+    const flamesInfo = flamesData[post.result];
+    
+    card.innerHTML = `
+        <div class="post-header">
+            <img src="${post.userAvatar}" alt="Avatar" class="post-avatar">
+            <div class="post-user-info">
+                <span class="post-username">${post.username}</span>
+                <span class="post-time">${getTimeAgo(post.timestamp)}</span>
+            </div>
+            <button class="post-menu-btn">⋯</button>
+        </div>
+        
+        ${post.caption ? `<p class="post-caption">${post.caption}</p>` : ''}
+        
+        <div class="post-result-display">
+            <div class="post-result-names">${post.name1} & ${post.name2}</div>
+            <div class="post-result-icon">${flamesInfo.icon}</div>
+            <div class="post-result-text">${flamesInfo.full}</div>
+            <div class="post-result-compatibility">${flamesInfo.compatibility}% Compatible</div>
+        </div>
+        
+        <div class="post-actions">
+            <button class="post-action-btn ${post.likedByCurrentUser ? 'liked' : ''}" data-action="like">
+                <span class="action-icon">${post.likedByCurrentUser ? '❤️' : '🤍'}</span>
+                <span>${post.likes}</span>
+            </button>
+            <button class="post-action-btn" data-action="comment">
+                <span class="action-icon">💬</span>
+                <span>${post.comments.length}</span>
+            </button>
+            <button class="post-action-btn" data-action="share">
+                <span class="action-icon">📤</span>
+            </button>
+        </div>
+    `;
+    
+    // Add event listeners
+    card.querySelector('[data-action="like"]').addEventListener('click', () => handleLike(post.id));
+    card.querySelector('[data-action="comment"]').addEventListener('click', () => showPostModal(post.id));
+    card.querySelector('[data-action="share"]').addEventListener('click', () => handleShareExistingPost(post.id));
+    
+    return card;
+}
+
+function handleLike(postId) {
+    const post = allPosts.find(p => p.id === postId);
+    if (!post) return;
+    
+    if (post.likedByCurrentUser) {
+        post.likes--;
+        post.likedByCurrentUser = false;
+    } else {
+        post.likes++;
+        post.likedByCurrentUser = true;
+        
+        if (window.hasHapticSupport) {
+            navigator.vibrate(30);
+        }
+        playTone(600, 0.05, 0.1);
+    }
+    
+    loadFeed();
+}
+
+function showPostModal(postId) {
+    const post = allPosts.find(p => p.id === postId);
+    if (!post) return;
+    
+    currentOpenPost = post;
+    
+    const flamesInfo = flamesData[post.result];
+    
+    document.getElementById('postDetailContent').innerHTML = `
+        <div class="post-result-display">
+            <div class="post-result-names">${post.name1} & ${post.name2}</div>
+            <div class="post-result-icon">${flamesInfo.icon}</div>
+            <div class="post-result-text">${flamesInfo.full}</div>
+            <div class="post-result-compatibility">${flamesInfo.compatibility}% Compatible</div>
+        </div>
+        ${post.caption ? `<p class="post-caption">${post.caption}</p>` : ''}
+    `;
+    
+    loadComments(post);
+    postModal.classList.add('show');
+}
+
+function hidePostModal() {
+    postModal.classList.remove('show');
+    currentOpenPost = null;
+}
+
+function loadComments(post) {
+    commentsList.innerHTML = '';
+    document.getElementById('commentsCount').textContent = post.comments.length;
+    
+    if (post.comments.length === 0) {
+        commentsList.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 40px 20px;">No comments yet. Be the first! 💬</p>';
+        return;
+    }
+    
+    post.comments.forEach(comment => {
+        const commentItem = document.createElement('div');
+        commentItem.className = 'comment-item';
+        commentItem.innerHTML = `
+            <div class="comment-header">
+                <img src="${comment.userAvatar}" alt="Avatar" class="comment-avatar">
+                <span class="comment-user">${comment.username}</span>
+                <span class="comment-time">${getTimeAgo(comment.timestamp)}</span>
+            </div>
+            <p class="comment-text">${comment.text}</p>
+        `;
+        commentsList.appendChild(commentItem);
+    });
+    
+    commentsList.scrollTop = commentsList.scrollHeight;
+}
+
+function handleAddComment() {
+    const text = commentInput.value.trim();
+    if (!text || !currentOpenPost) return;
+    
+    if (currentUser.isGuest) {
+        alert('Please login to comment!');
+        showAuthModal();
+        return;
+    }
+    
+    const comment = {
+        id: Date.now(),
+        username: currentUser.username,
+        userAvatar: currentUser.avatar,
+        text: text,
+        timestamp: Date.now()
+    };
+    
+    currentOpenPost.comments.push(comment);
+    commentInput.value = '';
+    
+    loadComments(currentOpenPost);
+    loadFeed();
+    
+    if (window.hasHapticSupport) {
+        navigator.vibrate(50);
+    }
+    playTone(800, 0.05, 0.1);
+}
+
+// Share functions
+function showShareModal() {
+    if (!currentResultForSharing) return;
+    
+    const flamesInfo = flamesData[currentResultForSharing.result];
+    
+    document.getElementById('sharePreview').innerHTML = `
+        <div class="post-result-names">${currentResultForSharing.name1} & ${currentResultForSharing.name2}</div>
+        <div class="post-result-icon">${flamesInfo.icon}</div>
+        <div class="post-result-text">${flamesInfo.full}</div>
+        <div class="post-result-compatibility">${flamesInfo.compatibility}% Compatible</div>
+    `;
+    
+    sharePostModal.classList.add('show');
+}
+
+function hideShareModal() {
+    sharePostModal.classList.remove('show');
+    shareCaption.value = '';
+    captionCount.textContent = '0';
+}
+
+function updateCaptionCount() {
+    captionCount.textContent = shareCaption.value.length;
+}
+
+function handleSharePost() {
+    if (!currentResultForSharing) return;
+    
+    if (currentUser.isGuest) {
+        alert('Please login to share posts!');
+        showAuthModal();
+        return;
+    }
+    
+    const post = {
+        id: Date.now(),
+        username: currentUser.username,
+        userAvatar: currentUser.avatar,
+        name1: currentResultForSharing.name1,
+        name2: currentResultForSharing.name2,
+        result: currentResultForSharing.result,
+        caption: shareCaption.value.trim(),
+        likes: 0,
+        likedByCurrentUser: false,
+        comments: [],
+        timestamp: Date.now()
+    };
+    
+    allPosts.unshift(post);
+    currentUser.posts.push(post);
+    
+    const shareToStory = document.getElementById('shareStory').checked;
+    if (shareToStory) {
+        addStoryFromResult(currentResultForSharing);
+    }
+    
+    hideShareModal();
+    switchToNav(navHome, socialFeedScreen);
+    
+    if (window.hasHapticSupport) {
+        navigator.vibrate([50, 100, 50]);
+    }
+    playResultSound();
+}
+
+function handleShareExistingPost(postId) {
+    alert('Sharing functionality coming soon! 📤');
+}
+
+// Stories functions
+function loadStories() {
+    storiesList.innerHTML = '';
+    
+    if (allStories.length === 0) {
+        storiesList.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 40px 20px; grid-column: 1/-1;">No stories yet. Be the first! 📖</p>';
+        return;
+    }
+    
+    allStories.forEach(story => {
+        const storyItem = createStoryItem(story);
+        storiesList.appendChild(storyItem);
+    });
+    
+    updateStoriesBadge();
+}
+
+function createStoryItem(story) {
+    const item = document.createElement('div');
+    item.className = 'story-item';
+    if (currentUser.viewedStories.includes(story.id)) {
+        item.classList.add('viewed');
+    }
+    
+    const flamesInfo = flamesData[story.result];
+    
+    item.innerHTML = `
+        <div class="story-background">
+            ${flamesInfo.icon}
+        </div>
+        <img src="${story.userAvatar}" alt="Avatar" class="story-user-avatar">
+        <span class="story-user-name">${story.username}</span>
+    `;
+    
+    item.addEventListener('click', () => viewStory(story));
+    
+    return item;
+}
+
+function viewStory(story) {
+    const flamesInfo = flamesData[story.result];
+    
+    document.getElementById('storyAvatar').src = story.userAvatar;
+    document.getElementById('storyUsername').textContent = story.username;
+    document.getElementById('storyTime').textContent = getTimeAgo(story.timestamp);
+    
+    document.getElementById('storyContent').innerHTML = `
+        <div style="background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px;">
+            <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px;">${story.name1} & ${story.name2}</div>
+            <div style="font-size: 5rem; margin: 20px 0;">${flamesInfo.icon}</div>
+            <div style="font-size: 2.5rem; font-weight: 700; background: var(--love-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 15px 0;">${flamesInfo.full}</div>
+            <div style="font-size: 1.5rem; color: var(--neon-pink); font-weight: 700; margin-top: 15px;">${flamesInfo.compatibility}%</div>
+        </div>
+    `;
+    
+    storyViewer.classList.add('active');
+    
+    if (!currentUser.viewedStories.includes(story.id)) {
+        currentUser.viewedStories.push(story.id);
+    }
+    
+    animateStoryProgress();
+}
+
+function animateStoryProgress() {
+    const progressBar = document.getElementById('storyProgress');
+    let width = 0;
+    const interval = setInterval(() => {
+        width += 1;
+        progressBar.style.width = width + '%';
+        if (width >= 100) {
+            clearInterval(interval);
+            hideStoryViewer();
+        }
+    }, 50);
+    
+    storyViewer.dataset.progressInterval = interval;
+}
+
+function hideStoryViewer() {
+    if (storyViewer.dataset.progressInterval) {
+        clearInterval(parseInt(storyViewer.dataset.progressInterval));
+    }
+    storyViewer.classList.remove('active');
+    document.getElementById('storyProgress').style.width = '0%';
+    loadStories();
+}
+
+function handleAddStory() {
+    if (!currentResultForSharing) {
+        alert('Please calculate a FLAMES result first!');
+        switchToNav(navCalculator, homeScreen);
+        return;
+    }
+    
+    if (currentUser.isGuest) {
+        alert('Please login to add stories!');
+        showAuthModal();
+        return;
+    }
+    
+    addStoryFromResult(currentResultForSharing);
+    
+    if (window.hasHapticSupport) {
+        navigator.vibrate([50, 100, 50]);
+    }
+}
+
+function addStoryFromResult(result) {
+    const story = {
+        id: Date.now(),
+        username: currentUser.username,
+        userAvatar: currentUser.avatar,
+        name1: result.name1,
+        name2: result.name2,
+        result: result.result,
+        timestamp: Date.now()
+    };
+    
+    allStories.unshift(story);
+    loadStories();
+    updateStoriesBadge();
+}
+
+function updateStoriesBadge() {
+    const unviewedCount = allStories.filter(s => !currentUser.viewedStories.includes(s.id)).length;
+    const badge = document.getElementById('storiesBadge');
+    if (unviewedCount > 0) {
+        badge.textContent = unviewedCount;
+        badge.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+// Leaderboard functions
+function loadLeaderboard(type) {
+    leaderboardContent.innerHTML = '';
+    
+    let sortedPosts = [...allPosts];
+    
+    if (type === 'compatible') {
+        sortedPosts.sort((a, b) => {
+            const aCompat = flamesData[a.result].compatibility;
+            const bCompat = flamesData[b.result].compatibility;
+            return bCompat - aCompat;
+        });
+    } else if (type === 'popular') {
+        sortedPosts.sort((a, b) => b.likes - a.likes);
+    } else {
+        sortedPosts.sort((a, b) => b.timestamp - a.timestamp);
+    }
+    
+    sortedPosts.slice(0, 20).forEach((post, index) => {
+        const item = createLeaderboardItem(post, index + 1);
+        leaderboardContent.appendChild(item);
+    });
+}
+
+function createLeaderboardItem(post, rank) {
+    const item = document.createElement('div');
+    item.className = 'leaderboard-item';
+    
+    const flamesInfo = flamesData[post.result];
+    let rankClass = '';
+    if (rank === 1) rankClass = 'gold';
+    else if (rank === 2) rankClass = 'silver';
+    else if (rank === 3) rankClass = 'bronze';
+    
+    item.innerHTML = `
+        <div class="leaderboard-rank ${rankClass}">
+            ${rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : '#' + rank}
+        </div>
+        <div class="leaderboard-info">
+            <div class="leaderboard-names">${post.name1} & ${post.name2}</div>
+            <div class="leaderboard-result">${flamesInfo.icon} ${flamesInfo.full}</div>
+        </div>
+        <div class="leaderboard-stats">
+            <div class="leaderboard-score">${flamesInfo.compatibility}%</div>
+            <div class="leaderboard-likes">❤️ ${post.likes}</div>
+        </div>
+    `;
+    
+    item.addEventListener('click', () => showPostModal(post.id));
+    
+    return item;
+}
+
+// Profile functions
+function loadProfile() {
+    document.getElementById('profilePosts').textContent = currentUser.posts.length;
+    document.getElementById('profileFollowers').textContent = currentUser.followers;
+    document.getElementById('profileFollowing').textContent = currentUser.following;
+    
+    loadProfileTab('grid');
+}
+
+function loadProfileTab(tab) {
+    profileGrid.innerHTML = '';
+    
+    if (tab === 'grid') {
+        if (currentUser.posts.length === 0) {
+            profileGrid.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 40px 20px; grid-column: 1/-1;">No results yet. Calculate your first FLAMES! ✨</p>';
+            return;
+        }
+        
+        currentUser.posts.forEach(post => {
+            const item = createProfileResultItem(post);
+            profileGrid.appendChild(item);
+        });
+    } else if (tab === 'list') {
+        profileGrid.style.display = 'block';
+        profileGrid.style.gridTemplateColumns = '1fr';
+        
+        if (calculationHistory.length === 0) {
+            profileGrid.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 40px 20px;">No history yet. Calculate your first FLAMES! ✨</p>';
+            return;
+        }
+        
+        calculationHistory.forEach(entry => {
+            const flamesInfo = flamesData[entry.result];
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `
+                <div class="history-item-names">${entry.name1} & ${entry.name2}</div>
+                <div class="history-item-result">
+                    ${flamesInfo.icon} ${flamesInfo.full}
+                    <span class="result-badge">${flamesInfo.compatibility}%</span>
+                </div>
+                <div class="history-item-time">${getTimeAgo(entry.timestamp)}</div>
+            `;
+            profileGrid.appendChild(item);
+        });
+    } else if (tab === 'friends') {
+        profileGrid.style.display = 'block';
+        profileGrid.style.gridTemplateColumns = '1fr';
+        profileGrid.innerHTML = '<p style="text-align: center; color: var(--text-dim); padding: 40px 20px;">Friends feature coming soon! 👥</p>';
+    }
+}
+
+function createProfileResultItem(post) {
+    const item = document.createElement('div');
+    item.className = 'profile-result-item';
+    
+    const flamesInfo = flamesData[post.result];
+    
+    item.innerHTML = `
+        <div class="profile-result-icon">${flamesInfo.icon}</div>
+        <div class="profile-result-type">${flamesInfo.full}</div>
+        <div class="profile-result-percent">${flamesInfo.compatibility}%</div>
+    `;
+    
+    item.addEventListener('click', () => showPostModal(post.id));
+    
+    return item;
+}
+
+// Friends functions
+function showFriendsModal(tab) {
+    friendsModal.classList.add('show');
+    loadFriendsList(tab);
+}
+
+function hideFriendsModal() {
+    friendsModal.classList.remove('show');
+}
+
+function loadFriendsList(tab) {
+    friendsList.innerHTML = '';
+    
+    // Demo users
+    for (let i = 0; i < 10; i++) {
+        const friend = {
+            username: `User${i + 1}`,
+            name: `Demo User ${i + 1}`,
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=User${i + 1}`,
+            isFollowing: Math.random() > 0.5
+        };
+        
+        const item = createFriendItem(friend);
+        friendsList.appendChild(item);
+    }
+}
+
+function createFriendItem(friend) {
+    const item = document.createElement('div');
+    item.className = 'friend-item';
+    
+    item.innerHTML = `
+        <img src="${friend.avatar}" alt="Avatar" class="friend-avatar">
+        <div class="friend-info">
+            <span class="friend-name">${friend.name}</span>
+            <span class="friend-username">@${friend.username}</span>
+        </div>
+        <button class="follow-btn ${friend.isFollowing ? 'following' : ''}">
+            ${friend.isFollowing ? 'Following' : 'Follow'}
+        </button>
+    `;
+    
+    const followBtn = item.querySelector('.follow-btn');
+    followBtn.addEventListener('click', () => {
+        friend.isFollowing = !friend.isFollowing;
+        followBtn.textContent = friend.isFollowing ? 'Following' : 'Follow';
+        followBtn.classList.toggle('following');
+        
+        if (friend.isFollowing) {
+            currentUser.following++;
+        } else {
+            currentUser.following--;
+        }
+        
+        document.getElementById('profileFollowing').textContent = currentUser.following;
+    });
+    
+    return item;
+}
+
+// Demo data generation
+function generateDemoData() {
+    const demoUsers = [
+        { name: 'Emma', partner: 'Liam' },
+        { name: 'Olivia', partner: 'Noah' },
+        { name: 'Sophia', partner: 'James' },
+        { name: 'Ava', partner: 'Oliver' },
+        { name: 'Isabella', partner: 'William' }
+    ];
+    
+    const results = ['F', 'L', 'A', 'M', 'E', 'S'];
+    const captions = [
+        'OMG! Can\'t believe this! 😍',
+        'Destiny has spoken! ✨',
+        'So accurate! 💕',
+        'This is amazing! 🔥',
+        'We tried it and... wow! 💖',
+        'Couldn\'t be more perfect! 🌟',
+        ''
+    ];
+    
+    // Generate posts
+    demoUsers.forEach((user, index) => {
+        const username = user.name + Math.floor(Math.random() * 100);
+        const result = results[Math.floor(Math.random() * results.length)];
+        const timestamp = Date.now() - (index * 3600000); // 1 hour apart
+        
+        const post = {
+            id: timestamp,
+            username: username,
+            userAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+            name1: user.name,
+            name2: user.partner,
+            result: result,
+            caption: captions[Math.floor(Math.random() * captions.length)],
+            likes: Math.floor(Math.random() * 200),
+            likedByCurrentUser: false,
+            comments: [],
+            timestamp: timestamp
+        };
+        
+        // Add some comments
+        const numComments = Math.floor(Math.random() * 5);
+        for (let i = 0; i < numComments; i++) {
+            post.comments.push({
+                id: timestamp + i,
+                username: 'User' + Math.floor(Math.random() * 100),
+                userAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=User${i}`,
+                text: ['So cute! ❤️', 'Congrats! 🎉', 'Beautiful! ✨', 'Love this! 💕'][Math.floor(Math.random() * 4)],
+                timestamp: timestamp + (i * 60000)
+            });
+        }
+        
+        allPosts.push(post);
+    });
+    
+    // Generate stories
+    demoUsers.slice(0, 3).forEach((user, index) => {
+        const username = user.name + Math.floor(Math.random() * 100);
+        const result = results[Math.floor(Math.random() * results.length)];
+        
+        allStories.push({
+            id: Date.now() - (index * 1000),
+            username: username,
+            userAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+            name1: user.name,
+            name2: user.partner,
+            result: result,
+            timestamp: Date.now() - (index * 3600000)
+        });
+    });
+}
+
+// Modified existing restart function to support social features
+const originalRestart = restart;
+function restart() {
+    originalRestart();
+    
+    // After calculation, show option to share
+    if (currentResultForSharing) {
+        setTimeout(() => {
+            if (confirm('Want to share this result on your feed? 📤')) {
+                showShareModal();
+            }
+        }, 1000);
+    }
+}
+
+// Modified showResult to store current result
+const originalShowResult = showResult;
+function showResult(flamesResult) {
+    const name1 = name1Input.value.trim();
+    const name2 = name2Input.value.trim();
+    
+    // Store result for sharing
+    currentResultForSharing = {
+        name1: name1,
+        name2: name2,
+        result: flamesResult
+    };
+    
+    originalShowResult(flamesResult);
+    
+    // Make social nav visible
+    socialNav.style.display = 'flex';
+}
+
+// Initialize everything
+const originalDOMContentLoaded = document.addEventListener;
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSocialFeatures();
+});
