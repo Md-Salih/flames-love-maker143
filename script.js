@@ -1226,10 +1226,14 @@ function initializeSocialFeatures() {
             updateUserInfo();
         }
         
-        // Don't show social feed by default - let user access via navigation
-        // Hide social nav initially
+        // Show social nav by default to access all features
         if (socialNav) {
-            socialNav.style.display = 'none';
+            socialNav.style.display = 'flex';
+        }
+        
+        // Add padding to calculator screen for navigation
+        if (homeScreen) {
+            homeScreen.style.paddingBottom = '100px';
         }
     } catch (error) {
         console.warn('Error initializing social features:', error);
