@@ -233,10 +233,6 @@ async function performAnimatedCalculation() {
     
     saveToHistory(name1, name2, finalLetter);
     
-    switchScreen(calculationScreen, loadingScreen);
-    
-    await sleep(1500);
-    
     showResult(finalLetter);
 }
 
@@ -482,7 +478,7 @@ function showResult(flamesResult) {
     resultMessage.textContent = data.message;
     resultQuote.textContent = data.quote;
     
-    switchScreen(loadingScreen, resultScreen);
+    switchScreen(calculationScreen, resultScreen);
     
     setTimeout(() => {
         compatibilityFill.style.width = data.compatibility + '%';
