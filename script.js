@@ -2093,24 +2093,3 @@ function generateDemoData() {
         });
     });
 }
-
-// Modified existing restart function to support social features
-const originalRestart = restart;
-function restart() {
-    originalRestart();
-    
-    // After calculation, show option to share
-    if (currentResultForSharing) {
-        setTimeout(() => {
-            if (confirm('Want to share this result on your feed? 📤')) {
-                showShareModal();
-            }
-        }, 1000);
-    }
-}
-
-// Initialize everything
-const originalDOMContentLoaded = document.addEventListener;
-document.addEventListener('DOMContentLoaded', () => {
-    initializeSocialFeatures();
-});
