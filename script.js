@@ -1208,60 +1208,73 @@ let currentResultForSharing = null;
 
 // Initialize social features
 function initializeSocialFeatures() {
-    setupSocialEventListeners();
-    generateDemoData();
-    updateUserInfo();
-    
-    // Show auth modal on first visit
-    const hasSeenAuth = localStorage.getItem('flamesAuthSeen');
-    if (!hasSeenAuth) {
-        setTimeout(() => {
-            showAuthModal();
-            localStorage.setItem('flamesAuthSeen', 'true');
-        }, 1000);
+    // Check if all required elements exist
+    if (!socialNav || !navHome || !socialFeedScreen) {
+        console.warn('Social features not available - missing elements');
+        return;
     }
     
-    // Load saved user
-    const savedUser = localStorage.getItem('flamesCurrentUser');
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
+    try {
+        setupSocialEventListeners();
+        generateDemoData();
         updateUserInfo();
+        
+        // Load saved user
+        const savedUser = localStorage.getItem('flamesCurrentUser');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            updateUserInfo();
+        }
+        
+        // Don't show social feed by default - let user access via navigation
+        // Hide social nav initially
+        if (socialNav) {
+            socialNav.style.display = 'none';
+        }
+    } catch (error) {
+        console.warn('Error initializing social features:', error);
     }
-    
-    // Show social feed by default
-    showSocialScreen(socialFeedScreen);
 }
 
 // Setup social event listeners
 function setupSocialEventListeners() {
+    // Safe event listener helper
+    const safeAddListener = (element, event, handler) => {
+        if (element) {
+            element.addEventListener(event, handler);
+        }
+    };
+    
     // Navigation
-    navHome.addEventListener('click', () => switchToNav(navHome, socialFeedScreen));
-    navStories.addEventListener('click', () => switchToNav(navStories, storiesScreen));
-    navCalculator.addEventListener('click', () => {
+    safeAddListener(navHome, 'click', () => switchToNav(navHome, socialFeedScreen));
+    safeAddListener(navStories, 'click', () => switchToNav(navStories, storiesScreen));
+    safeAddListener(navCalculator, 'click', () => {
         switchToNav(navCalculator, homeScreen);
         // Keep navigation visible
-        socialNav.style.display = 'flex';
-        socialFeedScreen.classList.remove('active');
-        homeScreen.classList.add('active');
-        homeScreen.style.paddingBottom = '100px';
+        if (socialNav) socialNav.style.display = 'flex';
+        if (socialFeedScreen) socialFeedScreen.classList.remove('active');
+        if (homeScreen) {
+            homeScreen.classList.add('active');
+            homeScreen.style.paddingBottom = '100px';
+        }
     });
-    navLeaderboard.addEventListener('click', () => switchToNav(navLeaderboard, leaderboardScreen));
-    navProfile.addEventListener('click', () => switchToNav(navProfile, profileScreen));
+    safeAddListener(navLeaderboard, 'click', () => switchToNav(navLeaderboard, leaderboardScreen));
+    safeAddListener(navProfile, 'click', () => switchToNav(navProfile, profileScreen));
     
     // User info click to navigate to profile
-    userInfo.addEventListener('click', () => switchToNav(navProfile, profileScreen));
+    safeAddListener(userInfo, 'click', () => switchToNav(navProfile, profileScreen));
     
     // Auth
-    closeAuth.addEventListener('click', hideAuthModal);
-    loginTab.addEventListener('click', () => switchAuthTab('login'));
-    signupTab.addEventListener('click', () => switchAuthTab('signup'));
-    loginBtn.addEventListener('click', handleLogin);
-    signupBtn.addEventListener('click', handleSignup);
-    continueAsGuest.addEventListener('click', handleGuestLogin);
-    logoutBtn.addEventListener('click', handleLogout);
+    safeAddListener(closeAuth, 'click', hideAuthModal);
+    safeAddListener(loginTab, 'click', () => switchAuthTab('login'));
+    safeAddListener(signupTab, 'click', () => switchAuthTab('signup'));
+    safeAddListener(loginBtn, 'click', handleLogin);
+    safeAddListener(signupBtn, 'click', handleSignup);
+    safeAddListener(continueAsGuest, 'click', handleGuestLogin);
+    safeAddListener(logoutBtn, 'click', handleLogout);
     
     // Post creation
-    createPostTrigger.addEventListener('click', () => {
+    safeAddListener(createPostTrigger, 'click', () => {
         if (!currentResultForSharing) {
             alert('Please calculate a FLAMES result first!');
             switchToNav(navCalculator, homeScreen);
@@ -1271,9 +1284,9 @@ function setupSocialEventListeners() {
     });
     
     // Share modal
-    closeSharePost.addEventListener('click', hideShareModal);
-    shareCaption.addEventListener('input', updateCaptionCount);
-    confirmSharePost.addEventListener('click', handleSharePost);
+    safeAddListener(closeSharePost, 'click', hideShareModal);
+    safeAddListener(shareCaption, 'input', updateCaptionCount);
+    safeAddListener(confirmSharePost, 'click', handleSharePost);
     
     // Post modal
     closePostModal.addEventListener('click', hidePostModal);
