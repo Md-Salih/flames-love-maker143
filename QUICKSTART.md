@@ -1,43 +1,23 @@
-# 🚀 Quick Start Guide - FLAMES Social App
+ # 🚀 Quick Start Guide - FLAMES App
 
-## Getting Started in 3 Steps
+## Getting Started
 
 ### 1️⃣ Open the App
-Simply open `index.html` in your web browser (double-click the file or drag it into a browser window).
+Open `index.html` in your web browser (double-click the file or drag it into a browser window).
 
-### 2️⃣ First Time Setup
-When you first open the app, you'll see:
-- **Welcome Modal** - Choose to Sign Up, Login, or Continue as Guest
-- **Recommendation**: Start as Guest to explore features, then create an account
-
-### 3️⃣ Navigate the App
-Use the **bottom navigation bar** to explore:
-- 🏠 **Home** - See the social feed
-- 📖 **Stories** - View 24-hour stories
-- ➕ **Calculate** - Try FLAMES calculation
-- 🏆 **Trending** - Check leaderboard
-- 👤 **Profile** - View your stats
-
----
-
-## 🎯 How to Use Each Feature
-
-### Calculate FLAMES (Core Feature)
-1. Click the **➕ Calculate** button in navigation
-2. Enter **your name** in the first field
-3. Enter **their name** in the second field
-4. Click **"Reveal Destiny"**
-5. Watch the step-by-step calculation animation:
+### 2️⃣ Use the FLAMES Calculator
+1. Enter **your name** in the first field
+2. Enter **their name** in the second field
+3. Click **"Reveal Destiny"**
+4. Watch the step-by-step calculation animation:
    - **Step 1**: Matching letters between names
    - **Step 2**: Counting remaining unique letters
    - **Step 3**: FLAMES elimination process
    - **Step 4**: Final letter reveal
-6. See your result with compatibility score
-7. Choose to **share to feed** and/or **add to story**
+5. See your result with compatibility score, message, and quote
 
-### Share Your Result
-After calculating:
-1. Click **"Share Result"** button
+### 3️⃣ View Your Profile
+Click the **Profile** section to view your avatar and calculation history.
 2. Add a **caption** (optional, max 500 chars)
 3. Choose options:
    - ☑️ Share to public feed

@@ -1128,6 +1128,26 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Console easter egg
+console.log('%c🔥 FLAMES - Destiny Relationship Analyzer 🔥', 'font-size: 20px; color: #9d4edd; font-weight: bold;');
+console.log('%cMade with ❤️ and ✨', 'font-size: 14px; color: #667eea;');
+console.log('%cTry entering your name to discover your destiny!', 'font-size: 12px; color: #764ba2;');
+
+    card.className = 'post-card';
+    card.dataset.postId = post.id;
+    
+    const flamesInfo = flamesData[post.result];
+    
+    card.innerHTML = `
+        <div class="post-header">
+            <img src="${post.userAvatar}" alt="Avatar" class="post-avatar">
+            <div class="post-user-info">
+                <span class="post-username">${post.username}</span>
+                <span class="post-time">${getTimeAgo(post.timestamp)}</span>
+            </div>
+            <button class="post-menu-btn">⋯</button>
+        </div>
+        
+        ${post.caption ? `<p class="post-caption">${post.caption}</p>` : ''}
         
         <div class="post-result-display">
             <div class="post-result-names">${post.name1} & ${post.name2}</div>
@@ -1612,7 +1632,50 @@ function loadFriendsList(tab) {
 
 function createFriendItem(friend) {
     const item = document.createElement('div');
+    item.className = 'friend-item';
+    
+    item.innerHTML = `
+        <img src="${friend.avatar}" alt="Avatar" class="friend-avatar">
+        <div class="friend-info">
+            <span class="friend-name">${friend.name}</span>
+            <span class="friend-username">@${friend.username}</span>
+        </div>
+        <button class="follow-btn ${friend.isFollowing ? 'following' : ''}">
+            ${friend.isFollowing ? 'Following' : 'Follow'}
+        </button>
+    `;
+    
+    const followBtn = item.querySelector('.follow-btn');
+    followBtn.addEventListener('click', () => {
+        friend.isFollowing = !friend.isFollowing;
+        followBtn.textContent = friend.isFollowing ? 'Following' : 'Follow';
+        followBtn.classList.toggle('following');
+        
+        if (friend.isFollowing) {
+            currentUser.following++;
+        } else {
+            currentUser.following--;
+        }
+        
+        document.getElementById('profileFollowing').textContent = currentUser.following;
+    });
+    
+    return item;
+}
 
+// Demo data generation
+function generateDemoData() {
+    const demoUsers = [
+        { name: 'Emma', partner: 'Liam' },
+        { name: 'Olivia', partner: 'Noah' },
+        { name: 'Sophia', partner: 'James' },
+        { name: 'Ava', partner: 'Oliver' },
+        { name: 'Isabella', partner: 'William' }
+    ];
+    
+    const results = ['F', 'L', 'A', 'M', 'E', 'S'];
+    const captions = [
+        'OMG! Can\'t believe this! 😍',
         'Destiny has spoken! ✨',
         'So accurate! 💕',
         'This is amazing! 🔥',

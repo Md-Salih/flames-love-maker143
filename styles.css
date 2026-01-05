@@ -1,3 +1,13 @@
+/* Hide the left vertical scrollbar (VS Code style) */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+/* For Firefox */
+html {
+    scrollbar-width: none;
+}
 * {
     margin: 0;
     padding: 0;

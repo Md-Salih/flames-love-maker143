@@ -1,43 +1,29 @@
-# 🔥 FLAMES Social App
+# 🔥 FLAMES App
 
-A full-stack social platform for relationship compatibility testing using the classic FLAMES game algorithm with modern Instagram-like features including user accounts, social feed, friends system, stories, leaderboard, and more!
+A beautiful, modern web app for relationship compatibility testing using the classic FLAMES game algorithm. Includes a profile page, calculation history, and rich animations.
 
 ## ✨ Features
 
 ### 🎨 Visual Design
-- **Premium Modern UI** - Glossy cards, neon accents, gradient backgrounds
+- **Modern UI** - Glossy cards, gradients, and smooth transitions
 - **Particle System** - Floating particles and sparkle effects
-- **Smooth Animations** - Glowing inputs, pulsing buttons, floating emojis
-- **Romantic Theme** - Love-inspired color palette with pink, purple, and gold tones
-- **Responsive Design** - Perfect on mobile and desktop devices
-- **Instagram-Inspired Interface** - Modern social media experience
+- **Animations** - Glowing inputs, pulsing buttons, floating emojis
+- **Romantic Theme** - Love-inspired color palette
+- **Responsive Design** - Works on mobile and desktop
 
 ### 🎮 FLAMES Calculation
-- **Real FLAMES Logic** - Authentic FLAMES calculation algorithm
+- **Classic FLAMES Logic** - Authentic calculation algorithm
 - **Step-by-Step Visualization** - Watch the calculation process unfold
 - **Loading Animation** - Suspenseful energy orb with rotating rings
 - **Result Reveal** - Dramatic text animation with bounce and glow effects
-- **Compatibility Score** - Animated percentage bar with smooth transitions
-- **Emotional Messages** - Personalized descriptions for each result
+- **Compatibility Score** - Animated percentage bar
+- **Personalized Messages** - Descriptions for each result
 - **Inspirational Quotes** - Thoughtful quotes for each relationship type
 
-### 👥 Social Features (Instagram-Style)
-
-#### User System
-- **User Authentication** - Sign up, login, or continue as guest
-- **User Profiles** - Customizable avatars, bio, and stats
-- **Follow System** - Follow and unfollow other users
-- **Followers/Following Count** - Track your social connections
-
-#### Social Feed
-- **Home Feed** - Scrollable feed of FLAMES results from all users
-- **Post Creation** - Share your FLAMES calculations with captions
-- **Like & Comment** - Interact with other users' posts
-- **Post Details** - View full post with all comments
-- **Timestamps** - See when posts were shared
-- **User Avatars** - Personalized profile pictures for each user
-
-#### FLAMES Stories (24h)
+### 👤 Profile Page
+- **User Profile** - View and edit your profile
+- **Calculation History** - See your past FLAMES results
+- **Avatar** - Personalized profile picture
 - **Story Creation** - Share FLAMES results as stories
 - **Story Viewer** - Full-screen immersive story experience
 - **Auto-Play** - Stories advance automatically with progress bar

@@ -1,43 +1,28 @@
-# 🔥 FLAMES Social - Complete Feature List
+# 🔥 FLAMES App - Feature List
 
 ## 🎯 Core Features
 
 ### 1. FLAMES Calculator
-- ✅ Classic FLAMES algorithm implementation
-- ✅ Step-by-step calculation visualization
+- Classic FLAMES algorithm implementation
+- Step-by-step calculation visualization
   - Letter matching animation
   - Remaining letters display
   - FLAMES circle elimination
   - Final letter reveal countdown
-- ✅ Beautiful result presentation
-- ✅ Compatibility percentage (0-100%)
-- ✅ Personalized messages for each result
-- ✅ Inspirational quotes
+- Beautiful result presentation
+- Compatibility percentage (0-100%)
+- Personalized messages for each result
+- Inspirational quotes
 
-### 2. User Authentication System
-- ✅ Sign Up with username, email, password
-- ✅ Login functionality
-- ✅ Guest mode (no account required)
-- ✅ User avatar generation (DiceBear API)
-- ✅ Persistent sessions (LocalStorage)
-- ✅ Logout functionality
+### 2. Profile Page
+- View and edit user profile
+- Display calculation history
+- Show user avatar and details
 
-### 3. Social Feed (Instagram-style)
-- ✅ Scrollable post feed
-- ✅ Post creation with FLAMES results
-- ✅ Custom captions (500 character limit)
-- ✅ Like/Unlike posts with heart animation
-- ✅ Comment on posts
-- ✅ View full post details in modal
-- ✅ User avatars and usernames
-- ✅ Timestamps ("just now", "5 minutes ago", etc.)
-- ✅ Post statistics (likes count, comments count)
-- ✅ Create post input (click to share)
-
-### 4. Stories Feature (24-hour)
-- ✅ Create stories from FLAMES results
-- ✅ Full-screen story viewer
-- ✅ Auto-advancing progress bar
+### 3. Animations & Visuals
+- Particle background
+- Floating emojis
+- Smooth UI transitions
 - ✅ Story grid layout
 - ✅ Unviewed stories badge
 - ✅ Viewed/unviewed story indication
