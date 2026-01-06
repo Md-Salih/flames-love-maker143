@@ -746,7 +746,7 @@ async function shareResult() {
     
     // Update share button state
     shareBtn.classList.add('capturing');
-    shareBtn.querySelector('span').textContent = '📸 Capturing...';
+    shareBtn.querySelector('span').textContent = 'Capturing...';
     
     // Prepare screenshot frame
     const screenshotFrame = document.getElementById('screenshotFrame');
